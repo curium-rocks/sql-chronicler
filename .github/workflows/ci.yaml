@@ -1,4 +1,4 @@
-name: Node TS Starter CI
+name: SQL Chronicler CI
 on:
   push:
 jobs:
