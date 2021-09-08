@@ -1,5 +1,5 @@
 {
-  "name": "ts-starter",
+  "name": "@curium-rocks/sql-chronicler",
   "version": "0.1.0",
   "description": "A library that persists IDataEmitter events to an SQL store using sequelize",
   "main": "build/src/index.js",
@@ -10,7 +10,7 @@
     "clean": "rm -fr build",
     "prepare": "npm run build",
     "doc": "typedoc src/lib.ts",
-    "sonarscan": "sonar-scanner -Dsonar.qualitygate.wait=true -Dsonar.organization=curium-rocks -Dsonar.projectKey=curium-rocks_sql-chronicler -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARQUBE_KEY -Dsonar.javascript.lcov.reportPath=coverage/"
+    "scan": "sonar-scanner -Dsonar.qualitygate.wait=true -Dsonar.organization=curium-rocks -Dsonar.projectKey=curium-rocks_sql-chronicler -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARQUBE_KEY -Dsonar.javascript.lcov.reportPath=coverage/"
   },
   "repository": {
     "type": "git",
