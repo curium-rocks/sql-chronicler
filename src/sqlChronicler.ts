@@ -1,4 +1,27 @@
 import { IChronicler, IDataEvent, IFormatSettings, IJsonSerializable, IStatusEvent } from '@curium.rocks/data-emitter-base';
+import { Sequelize } from 'sequelize/types';
+
+
+export enum DbType {
+    SQL_LITE,
+    POSTGRES,
+    MY_SQL,
+    MARIA_DB,
+    MS_SQL
+}
+export interface DbCredentials {
+    username: string;
+    password: string;
+}
+export interface SqlChroniclerOptions {
+    id: string;
+    name: string;
+    description: string;
+    type: DbType;
+    credentials: DbCredentials;
+    storagePath?: string;
+    host?: string;
+}
 
 /**
  * 
@@ -18,16 +41,29 @@ export class SqlChronicler implements IChronicler {
      */
     description: string;
 
+    private readonly sequelize: Sequelize;
+
+    /**
+     * @param {SqlChroniclerOptions} options 
+     */
+    constructor(options: SqlChroniclerOptions) {
+        this.id = options.id;
+        this.name = options.name;
+        this.description = options.description;
+        this.sequelize = this.buildSequelize(options);
+    }
+
+
     /**
      * 
-     * @param {string} id 
-     * @param {string} name 
-     * @param {string} description 
+     * @param {SqlChroniclerOptions} options 
+     * @return {Sequelize} 
      */
-    constructor(id: string, name: string, description: string){
-        this.id = id;
-        this.name = name;
-        this.description = description;
+    private buildSequelize(options: SqlChroniclerOptions) : Sequelize {
+        return new Sequelize({
+            dialect: 'sqlite',
+            storage: options.storagePath as string
+        });
     }
 
     /**
