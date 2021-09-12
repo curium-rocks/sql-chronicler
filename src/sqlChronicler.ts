@@ -1,4 +1,4 @@
-import { IChronicler, IFormatSettings, IJsonSerializable } from '@curium.rocks/data-emitter-base';
+import { IChronicler, IDataEvent, IFormatSettings, IJsonSerializable, IStatusEvent } from '@curium.rocks/data-emitter-base';
 
 /**
  * 
@@ -32,17 +32,16 @@ export class SqlChronicler implements IChronicler {
 
     /**
      * 
-     * @param {IJsonSerializable} record 
      */
-    saveRecord(record: IJsonSerializable): Promise<void> {
+    disposeAsync(): Promise<void> {
         throw new Error('Method not implemented.');
     }
 
-
     /**
      * 
+     * @param {IJsonSerializable|DataEvent|IStatusEvent} record 
      */
-    dispose(): void {
+    saveRecord(record: IJsonSerializable|IDataEvent|IStatusEvent): Promise<void> {
         throw new Error('Method not implemented.');
     }
 
