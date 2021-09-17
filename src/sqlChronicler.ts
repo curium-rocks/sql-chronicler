@@ -9,6 +9,8 @@ import { Emitter } from './entities/emitter';
 import { EmitterData } from './entities/emitterData';
 import { EmitterStatusHistory } from './entities/emitterStatusHistory';
 import { Record } from './entities/record';
+import { Initial1631889997383 } from './migrations/1631889997383-Initial';
+import "reflect-metadata";
 
 export enum DbType {
     SQL_LITE,
@@ -100,7 +102,7 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
                 Record
             ],
             migrations: [
-                
+                Initial1631889997383
             ],
             synchronize: false,
             logging: true

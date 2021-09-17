@@ -9,7 +9,7 @@ import { Emitter } from "./emitter";
  * 
  */
 export class EmitterData {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("uuid")
     id!: string;
 
     @ManyToOne(() => Emitter, emitter => emitter.data)
