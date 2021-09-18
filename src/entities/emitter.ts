@@ -1,6 +1,6 @@
 /* eslint-disable new-cap */
 import { IDataEmitter } from "@curium.rocks/data-emitter-base";
-import { Entity, Column, OneToMany, PrimaryColumn } from "typeorm";
+import { Entity, Column, OneToMany, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { EmitterData } from "./emitterData";
 import { EmitterStatusHistory } from "./emitterStatusHistory";
 
@@ -28,6 +28,12 @@ export class Emitter {
 
     @Column({nullable: true})
     altitude?: number;
+
+    @CreateDateColumn({ name: "created_at", readonly: true })
+    createdAt!: Date;
+    
+    @UpdateDateColumn({ name: "updated_at" })
+    updatedAt!: Date;
 
     @OneToMany(() => EmitterData, data => data.emitter)
     data!: EmitterData[];

@@ -1,6 +1,6 @@
 /* eslint-disable new-cap */
 import { IStatusEvent } from "@curium.rocks/data-emitter-base";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Emitter } from "./emitter";
 
 @Entity()
@@ -25,6 +25,12 @@ export class EmitterStatusHistory {
 
     @Column()
     timestamp!: Date;
+
+    @CreateDateColumn({ name: "created_at", readonly: true })
+    createdAt!: Date;
+    
+    @UpdateDateColumn({ name: "updated_at" })
+    updatedAt!: Date;
 
     /**
      * 
