@@ -68,11 +68,11 @@ export class Initial1631889997383 implements MigrationInterface {
                 },
                 {
                     name: "meta",
-                    type: queryRunner.connection.driver.options.type === "postgres" ? "text" : "simple-json"
+                    type: queryRunner.connection.driver.options.type === "postgres" || queryRunner.connection.driver.options.type === "sqlite" ? "text" : "simple-json"
                 },
                 {
                     name: "data",
-                    type: queryRunner.connection.driver.options.type === "postgres" ? "text" : "simple-json"
+                    type: queryRunner.connection.driver.options.type === "postgres" || queryRunner.connection.driver.options.type === "sqlite" ? "text" : "simple-json"
                 },
                 {
                     name: "timestamp",
