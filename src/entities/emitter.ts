@@ -17,7 +17,7 @@ export class Emitter {
     @Column()
     name!: string;
 
-    @Column()
+    @Column({length: 1000})
     description!: string;
 
     @Column({nullable: true})
