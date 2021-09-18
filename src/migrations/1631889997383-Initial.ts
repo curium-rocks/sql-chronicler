@@ -1,3 +1,4 @@
+import { type } from "os";
 import {MigrationInterface, QueryRunner, TableIndex} from "typeorm";
 import { FKPatch } from "../fkPatch";
 import { TablePatch } from "../tablePatch";
@@ -6,6 +7,36 @@ import { TablePatch } from "../tablePatch";
  * Initial migration to create tables
  */
 export class Initial1631889997383 implements MigrationInterface {
+
+
+    /**
+     * 
+     * @param {string} dbType 
+     * @return {string} 
+     */
+    private getJsonType(dbType: string) : string {
+        switch(dbType.toLowerCase()) {
+            case 'postgres':
+            case 'sqlite':
+                return 'text';
+            default:
+                return 'simple-json';
+        }
+    }
+
+    /**
+     * 
+     * @param {string} dbType 
+     * @return {string}
+     */
+    private getNowFunc(dbType: string) : string {
+        switch(dbType.toLowerCase()) {
+            case 'sqlite':
+                return "time('now')";
+            default: 
+                return this.getNowFunc(queryRunner.connection.driver.options.type);
+        }
+    }
 
     /**
      * 
@@ -44,12 +75,12 @@ export class Initial1631889997383 implements MigrationInterface {
                 {
                     name: "created_at",
                     type: "timestamp",
-                    default: "now()"
+                    default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "updated_at",
                     type: "timestamp",
-                    default: "now()"
+                    default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 }
             ]
         }));
@@ -68,11 +99,11 @@ export class Initial1631889997383 implements MigrationInterface {
                 },
                 {
                     name: "meta",
-                    type: queryRunner.connection.driver.options.type === "postgres" || queryRunner.connection.driver.options.type === "sqlite" ? "text" : "simple-json"
+                    type: this.getJsonType(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "data",
-                    type: queryRunner.connection.driver.options.type === "postgres" || queryRunner.connection.driver.options.type === "sqlite" ? "text" : "simple-json"
+                    type: this.getJsonType(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "timestamp",
@@ -81,12 +112,12 @@ export class Initial1631889997383 implements MigrationInterface {
                 {
                     name: "created_at",
                     type: "timestamp",
-                    default: "now()"
+                    default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "updated_at",
                     type: "timestamp",
-                    default: "now()"
+                    default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 }
             ]
         }));
@@ -120,12 +151,12 @@ export class Initial1631889997383 implements MigrationInterface {
                 {
                     name: "created_at",
                     type: "timestamp",
-                    default: "now()"
+                    default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "updated_at",
                     type: "timestamp",
-                    default: "now()"
+                    default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 }
             ]
         }));
@@ -140,17 +171,17 @@ export class Initial1631889997383 implements MigrationInterface {
                 },
                 {
                     name: "data",
-                    type: queryRunner.connection.driver.options.type === "postgres" || queryRunner.connection.driver.options.type === "sqlite"  ? "text" : "simple-json"
+                    type: this.getJsonType(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "created_at",
                     type: "timestamp",
-                    default: "now()"
+                    default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "updated_at",
                     type: "timestamp",
-                    default: "now()"
+                    default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 }
             ]
         }));
