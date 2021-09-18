@@ -20,13 +20,13 @@ export class Emitter {
     @Column()
     description!: string;
 
-    @Column()
+    @Column({nullable: true})
     latitude?: number;
 
-    @Column()
+    @Column({nullable: true})
     longitude?: number;
 
-    @Column()
+    @Column({nullable: true})
     altitude?: number;
 
     @OneToMany(() => EmitterData, data => data.emitter)

@@ -62,14 +62,17 @@ export class Initial1631889997383 implements MigrationInterface {
                 },
                 {
                     name: "latitude",
+                    isNullable: true,
                     type: "float"
                 },
                 {
                     name: "longitude",
+                    isNullable: true,
                     type: "float"
                 },
                 {
                     name: "altitude",
+                    isNullable: true,
                     type: "float"
                 },
                 {
