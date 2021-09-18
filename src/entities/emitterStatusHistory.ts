@@ -8,7 +8,7 @@ import { Emitter } from "./emitter";
  * 
  */
 export class EmitterStatusHistory {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("uuid")
     id!: string;
 
     @ManyToOne(() => Emitter, emitter => emitter.history)

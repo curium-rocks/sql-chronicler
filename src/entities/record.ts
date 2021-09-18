@@ -7,7 +7,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
  * 
  */
 export class Record {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("uuid")
     id!: string;
 
     @Column("simple-json")
