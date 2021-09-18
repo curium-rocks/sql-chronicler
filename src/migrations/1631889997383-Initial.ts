@@ -17,7 +17,10 @@ export class Initial1631889997383 implements MigrationInterface {
     private getJsonType(dbType: string) : string {
         switch(dbType.toLowerCase()) {
             case 'postgres':
+                return 'json';
             case 'sqlite':
+            case 'mariadb':
+            case 'mysql':
                 return 'text';
             default:
                 return 'simple-json';
@@ -35,6 +38,35 @@ export class Initial1631889997383 implements MigrationInterface {
                 return "time('now')";
             default: 
                 return "now()";
+        }
+    }
+
+    /**
+     * 
+     * @param {DbType} dbType 
+     * @return {string} 
+     */
+    private getUuidType(dbType: string) : string {
+        switch(dbType.toLowerCase()) {
+            case 'mariadb':
+            case 'mysql':
+                return "varchar";
+            default:
+                return "uuid";
+        }
+    }
+
+    /**
+     * 
+     * @param {string} dbType 
+     * @return {string | undefined}  
+     */
+    private getDefaultForUUID(dbType: string) : string | undefined {
+        switch(dbType.toLowerCase()) {
+            case 'postgres':
+                return "uuid_generate_v4()";
+            default: 
+                return undefined;
         }
     }
 
@@ -93,7 +125,8 @@ export class Initial1631889997383 implements MigrationInterface {
             columns: [
                 {
                     name: "id",
-                    type: "uuid",
+                    type: this.getUuidType(queryRunner.connection.driver.options.type),
+                    default: this.getDefaultForUUID(queryRunner.connection.driver.options.type),
                     isPrimary: true
                 },
                 {
@@ -132,7 +165,8 @@ export class Initial1631889997383 implements MigrationInterface {
             columns: [
                 {
                     name: "id",
-                    type: "uuid",
+                    type: this.getUuidType(queryRunner.connection.driver.options.type),
+                    default: this.getDefaultForUUID(queryRunner.connection.driver.options.type),
                     isPrimary: true
                 },
                 {
@@ -169,7 +203,8 @@ export class Initial1631889997383 implements MigrationInterface {
             columns: [
                 {
                     name: "id",
-                    type: "uuid",
+                    type: this.getUuidType(queryRunner.connection.driver.options.type),
+                    default: this.getDefaultForUUID(queryRunner.connection.driver.options.type),
                     isPrimary: true
                 },
                 {

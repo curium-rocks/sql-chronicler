@@ -25,11 +25,11 @@
     "chronicler"
   ],
   "devDependencies": {
+    "@curium.rocks/ping-pong-emitter": "^0.1.1-13",
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.3.1",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
-    "@curium.rocks/ping-pong-emitter": "^0.1.1-13",
     "chai": "^4.3.4",
     "eslint": "^7.30.0",
     "eslint-config-google": "^0.14.0",
@@ -72,7 +72,6 @@
   "dependencies": {
     "@curium.rocks/data-emitter-base": "^0.1.1-alpha.35",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.37",
-    "typeorm-extension": "^0.2.9"
+    "typeorm": "^0.2.37"
   }
 }

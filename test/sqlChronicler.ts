@@ -55,6 +55,7 @@ describe( 'SqlChronicler', function() {
              */
             function setupMariaDb(container: GenericContainer) : void {
                 container.withEnv("MARIADB_ALLOW_EMPTY_ROOT_PASSWORD", "true")
+                    .withEnv("MARIADB_DATABASE", "chronicler")
                     .withExposedPorts(getPort(DbType.MARIA_DB))
             }
 
@@ -64,6 +65,7 @@ describe( 'SqlChronicler', function() {
              */
             function setupMySQL(container: GenericContainer) : void {
                 container.withEnv("MYSQL_ROOT_PASSWORD", "password")
+                    .withEnv("MYSQL_DATABASE", "chronicler")
                     .withExposedPorts(3306)
             }
 
@@ -73,6 +75,7 @@ describe( 'SqlChronicler', function() {
              */
             function setupPostgres(container: GenericContainer) : void {
                 container.withEnv("POSTGRES_PASSWORD", "postgres")
+                    .withEnv("POSTGRES_DB", "chronicler")
                     .withExposedPorts(getPort(DbType.POSTGRES));
             }
 
@@ -196,8 +199,7 @@ describe( 'SqlChronicler', function() {
                     database: 'chronicler',
                     connectionName: type + "-" + testName,
                     host: type == DbType.SQL_LITE ? undefined : container.getHost(),
-                    port: type == DbType.SQL_LITE ? undefined : container.getMappedPort(getPort(type)),
-                    createDatabase: true
+                    port: type == DbType.SQL_LITE ? undefined : container.getMappedPort(getPort(type))
                 }
             }
 
