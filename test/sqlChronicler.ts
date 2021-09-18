@@ -2,6 +2,9 @@ import { describe, it} from 'mocha';
 import { expect } from 'chai';
 import { DbType, SqlChronicler, SqlChroniclerOptions } from '../src/sqlChronicler';
 import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers';
+import { createConnection } from 'net';
+import { getConnection } from 'typeorm';
+import { Record } from '../src/entities/record';
 
 describe( 'SqlChronicler', function() {
     const dbTypes = [DbType.MARIA_DB, DbType.MS_SQL, DbType.MY_SQL, DbType.POSTGRES, DbType.SQL_LITE];
@@ -183,18 +186,29 @@ describe( 'SqlChronicler', function() {
 
             it('Should record general data', async () => {
                 const chronicler = new SqlChronicler(buildConfig(type));
+                const testData = {
+                    "test1": "test1",
+                    "test2": "test2",
+                    "test3": "test3"
+                };
                 try {
                     await chronicler.saveRecord({
                         toJSON: () => {
-                            return {
-                                "test1": "test1",
-                                "test2": "test2",
-                                "test3": "test3"
-                            }
+                            return testData;
                         }
                     });
 
                     // pull record out and confirm
+                    const conn = getConnection();
+                    const records = await conn.manager.find(Record);
+                    expect(records).to.not.be.null;
+                    expect(records.length).to.be.eq(1);
+                    
+                    const savedRecord = records[0];
+                    expect(savedRecord.id).to.not.be.null;
+                    expect(savedRecord.data).to.not.be.null;
+                    console.log(JSON.stringify(savedRecord.data));
+                    expect(savedRecord.data).to.be.eq(testData)
                 } finally {
                     await chronicler.disposeAsync();
                 }

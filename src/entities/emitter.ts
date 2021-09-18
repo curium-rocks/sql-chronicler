@@ -1,6 +1,6 @@
 /* eslint-disable new-cap */
 import { IDataEmitter } from "@curium.rocks/data-emitter-base";
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, PrimaryColumn } from "typeorm";
+import { Entity, Column, OneToMany, PrimaryColumn } from "typeorm";
 import { EmitterData } from "./emitterData";
 import { EmitterStatusHistory } from "./emitterStatusHistory";
 
