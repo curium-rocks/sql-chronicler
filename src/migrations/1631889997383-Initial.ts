@@ -90,7 +90,8 @@ export class Initial1631889997383 implements MigrationInterface {
                 },
                 {
                     name: "description",
-                    type: "text"
+                    type: "varchar",
+                    length: "1000"
                 },
                 {
                     name: "latitude",
@@ -247,6 +248,7 @@ export class Initial1631889997383 implements MigrationInterface {
         }))
         await queryRunner.createIndex("emitter", new TableIndex({
             name: "IDX_EMITTER_DESCRIPTION",
+            
             columnNames: ["description"]
         }))
     }
