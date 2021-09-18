@@ -157,7 +157,7 @@ describe( 'SqlChronicler', function() {
                     case DbType.MY_SQL:
                         return 'root';
                     case DbType.MS_SQL:
-                        return "admin";
+                        return "sa";
                     default:
                         return undefined;
                 }
