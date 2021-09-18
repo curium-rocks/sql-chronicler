@@ -13,15 +13,15 @@ import { Initial1631889997383 } from './migrations/1631889997383-Initial';
 import "reflect-metadata";
 
 export enum DbType {
-    SQL_LITE,
-    POSTGRES,
-    MY_SQL,
-    MARIA_DB,
-    MS_SQL
+    SQL_LITE = "sqlite",
+    POSTGRES = "postgres",
+    MY_SQL = "mysql",
+    MARIA_DB = "mariadb",
+    MS_SQL = "mssql"
 }
 export interface DbCredentials {
-    username: string;
-    password: string;
+    username?: string;
+    password?: string;
 }
 export interface SqlChroniclerOptions {
     id: string;
