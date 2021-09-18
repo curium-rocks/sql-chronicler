@@ -13,9 +13,9 @@ export class Record {
     @Column("simple-json")
     data: unknown
 
-    @Column({ name: "created_at", readonly: true, default: new Date()})
+    @Column({ name: "created_at", type: "timestamp", readonly: true, default: new Date()})
     createdAt!: Date;
     
-    @Column({ name: "updated_at", default: new Date()})
+    @Column({ name: "updated_at", type: "timestamp", default: new Date()})
     updatedAt!: Date;
 }
