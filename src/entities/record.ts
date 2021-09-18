@@ -13,11 +13,9 @@ export class Record {
     @Column("simple-json")
     data: unknown
 
-    @Column({ name: "created_at", readonly: true })
-    @CreateDateColumn()
+    @CreateDateColumn({ name: "created_at", readonly: true })
     createdAt!: Date;
     
-    @Column({ name: "updated_at" })
-    @UpdateDateColumn()
+    @UpdateDateColumn({ name: "updated_at" })
     updatedAt!: Date;
 }
