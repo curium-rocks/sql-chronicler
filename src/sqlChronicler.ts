@@ -78,7 +78,10 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
      */
     private buildConnection(): Promise<Connection> {
         if(this.connectionProm != null) return this.connectionProm;
-        this.connectionProm = createConnection(this.getConnOptions());
+        this.connectionProm = createConnection(this.getConnOptions()).then(async (conn)=>{
+            await conn.runMigrations();
+            return conn;
+        });
         return this.connectionProm;
     }
 
