@@ -174,6 +174,8 @@ describe( 'SqlChronicler', function() {
                         return "postgres";
                     case DbType.MY_SQL:
                         return "password";
+                    case DbType.MS_SQL:
+                        return "test";
                     default:
                         return undefined;
                 }
