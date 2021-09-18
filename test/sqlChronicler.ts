@@ -86,7 +86,7 @@ describe( 'SqlChronicler', function() {
             function setupMsSQL(container: GenericContainer): void {
                 container.withEnv("ACCEPT_EULA", "Y")
                     .withEnv("MSSQL_PID", "EXPRESS")
-                    .withEnv("SA_PASSWORD", "test")
+                    .withEnv("SA_PASSWORD", "str0ngPassw0rd")
                     .withExposedPorts(getPort(DbType.MS_SQL))
             }
 
@@ -175,7 +175,7 @@ describe( 'SqlChronicler', function() {
                     case DbType.MY_SQL:
                         return "password";
                     case DbType.MS_SQL:
-                        return "test";
+                        return "str0ngPassw0rd";
                     default:
                         return undefined;
                 }
