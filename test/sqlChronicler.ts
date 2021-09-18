@@ -1,10 +1,23 @@
 import { describe, it} from 'mocha';
 import { expect } from 'chai';
 import { DbType, SqlChronicler, SqlChroniclerOptions } from '../src/sqlChronicler';
-import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers';
-import { createConnection } from 'net';
+import { PingPongEmitter } from '@curium.rocks/ping-pong-emitter';
+import { GenericContainer, StartedTestContainer } from 'testcontainers';
 import { getConnection } from 'typeorm';
 import { Record } from '../src/entities/record';
+import { Emitter } from '../src/entities/emitter';
+import { EmitterData } from '../src/entities/emitterData';
+
+/**
+ * 
+ * @param {number} sleepMs 
+ * @return {Promise<void>} 
+ */
+function sleep(sleepMs: number): Promise<void> {
+    return new Promise((resolve) => {
+        setTimeout(resolve, sleepMs);
+    });
+}
 
 describe( 'SqlChronicler', function() {
     const dbTypes = [DbType.MARIA_DB, DbType.MS_SQL, DbType.MY_SQL, DbType.POSTGRES, DbType.SQL_LITE];
@@ -217,9 +230,19 @@ describe( 'SqlChronicler', function() {
 
             it('Should record data events', async () => {
                 const chronicler = new SqlChronicler(buildConfig(type));
+                const pingPongEmitter = new PingPongEmitter('test', 'test', 'test', 100);
                 try {
+                    pingPongEmitter.onData(chronicler.saveRecord.bind(chronicler));
+                    pingPongEmitter.start();
+                    await sleep(1000);
+                    const conn = getConnection();
+                    const emitters = await conn.manager.find(Emitter);
+                    expect(emitters.length).to.be.eq(1);
+                    const emitterData = await conn.manager.find(EmitterData);
+                    expect(emitterData.length).to.be.greaterThan(0);
 
                 } finally {
+                    pingPongEmitter.dispose();
                     await chronicler.disposeAsync();
                 }
             });
