@@ -1,5 +1,5 @@
 /* eslint-disable new-cap */
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 
 @Entity()
@@ -13,9 +13,11 @@ export class Record {
     @Column("simple-json")
     data: unknown
 
-    @Column({ name: "created_at", type: "timestamp", readonly: true, default: new Date()})
+    @Column({ name: "created_at", readonly: true })
+    @CreateDateColumn()
     createdAt!: Date;
     
-    @Column({ name: "updated_at", type: "timestamp", default: new Date()})
+    @Column({ name: "updated_at" })
+    @UpdateDateColumn()
     updatedAt!: Date;
 }
