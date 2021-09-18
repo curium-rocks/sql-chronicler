@@ -12,4 +12,10 @@ export class Record {
 
     @Column("simple-json")
     data: unknown
+
+    @Column({ name: "created_at"})
+    createdAt!: Date;
+    
+    @Column({ name: "updated_at"})
+    updatedAt!: Date;
 }

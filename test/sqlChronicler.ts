@@ -207,8 +207,9 @@ describe( 'SqlChronicler', function() {
                     const savedRecord = records[0];
                     expect(savedRecord.id).to.not.be.null;
                     expect(savedRecord.data).to.not.be.null;
-                    console.log(JSON.stringify(savedRecord.data));
-                    expect(savedRecord.data).to.be.deep.eq(testData)
+                    expect(savedRecord.data).to.be.deep.eq(testData);
+                    expect(savedRecord.createdAt).to.not.be.null;
+                    expect(savedRecord.updatedAt).to.not.be.null;
                 } finally {
                     await chronicler.disposeAsync();
                 }
