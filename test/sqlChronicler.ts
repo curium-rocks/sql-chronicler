@@ -208,7 +208,7 @@ describe( 'SqlChronicler', function() {
                     expect(savedRecord.id).to.not.be.null;
                     expect(savedRecord.data).to.not.be.null;
                     console.log(JSON.stringify(savedRecord.data));
-                    expect(savedRecord.data).to.be.eq(testData)
+                    expect(savedRecord.data).to.be.deep.eq(testData)
                 } finally {
                     await chronicler.disposeAsync();
                 }
