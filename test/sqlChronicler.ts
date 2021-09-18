@@ -199,7 +199,11 @@ describe( 'SqlChronicler', function() {
                     database: 'chronicler',
                     connectionName: type + "-" + testName,
                     host: type == DbType.SQL_LITE ? undefined : container.getHost(),
-                    port: type == DbType.SQL_LITE ? undefined : container.getMappedPort(getPort(type))
+                    port: type == DbType.SQL_LITE ? undefined : container.getMappedPort(getPort(type)),
+                    extra: type == DbType.MS_SQL ? {
+                        validateConnection: false,
+                        trustServerCertificate: true
+                    } : undefined
                 }
             }
 

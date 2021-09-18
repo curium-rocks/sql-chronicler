@@ -36,6 +36,7 @@ export interface SqlChroniclerOptions {
     statusRetention: unknown;
     dataRetention: unknown;
     connectionName?: string;
+    extra?: unknown;
 }
 
 /**
@@ -110,7 +111,8 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
             ],
             synchronize: false,
             logging: ["error"],
-            migrationsRun: false
+            migrationsRun: false,
+            extra: this.options.extra
         };
 
         switch(opts.type) {
