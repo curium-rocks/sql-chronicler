@@ -1,4 +1,4 @@
-import {MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex} from "typeorm";
+import {MigrationInterface, QueryRunner, TableIndex} from "typeorm";
 import { FKPatch } from "../fkPatch";
 import { TablePatch } from "../tablePatch";
 
@@ -140,7 +140,7 @@ export class Initial1631889997383 implements MigrationInterface {
                 },
                 {
                     name: "data",
-                    type: queryRunner.connection.driver.options.type === "postgres" ? "text" : "simple-json"
+                    type: queryRunner.connection.driver.options.type === "postgres" || queryRunner.connection.driver.options.type === "sqlite"  ? "text" : "simple-json"
                 },
                 {
                     name: "created_at",
