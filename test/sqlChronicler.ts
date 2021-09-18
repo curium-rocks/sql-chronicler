@@ -46,7 +46,8 @@ describe( 'SqlChronicler', function() {
              * setup mysql container
              */
             function setupMySQL(container: GenericContainer) : void {
-                console.log('todo');
+                container.withEnv("MYSQL_ROOT_PASSWORD", "password")
+                    .withExposedPorts(3306)
             }
 
             /**
@@ -151,6 +152,8 @@ describe( 'SqlChronicler', function() {
                 switch(type) {
                     case DbType.POSTGRES:
                         return "postgres";
+                    case DbType.MY_SQL:
+                        return "password";
                     default:
                         return undefined;
                 }
