@@ -90,9 +90,7 @@ export class Initial1631889997383 implements MigrationInterface {
                 },
                 {
                     name: "description",
-                    type: "varchar",
-                    length: "1000"
-                },
+                    type: "varchar"                },
                 {
                     name: "latitude",
                     isNullable: true,
