@@ -34,7 +34,7 @@ export class Initial1631889997383 implements MigrationInterface {
             case 'sqlite':
                 return "time('now')";
             default: 
-                return this.getNowFunc(queryRunner.connection.driver.options.type);
+                return "now()";
         }
     }
 
