@@ -196,7 +196,8 @@ describe( 'SqlChronicler', function() {
                     database: 'chronicler',
                     connectionName: type + "-" + testName,
                     host: type == DbType.SQL_LITE ? undefined : container.getHost(),
-                    port: type == DbType.SQL_LITE ? undefined : container.getMappedPort(getPort(type))
+                    port: type == DbType.SQL_LITE ? undefined : container.getMappedPort(getPort(type)),
+                    createDatabase: true
                 }
             }
 

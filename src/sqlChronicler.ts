@@ -10,6 +10,7 @@ import { EmitterData } from './entities/emitterData';
 import { EmitterStatusHistory } from './entities/emitterStatusHistory';
 import { Record } from './entities/record';
 import { Initial1631889997383 } from './migrations/1631889997383-Initial';
+import { createDatabase } from 'typeorm-extension';
 import "reflect-metadata";
 
 export enum DbType {
@@ -36,6 +37,7 @@ export interface SqlChroniclerOptions {
     statusRetention: unknown;
     dataRetention: unknown;
     connectionName?: string;
+    createDatabase?: boolean;
 }
 
 /**
@@ -79,11 +81,22 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
      */
     private buildConnection(): Promise<Connection> {
         if(this.connectionProm != null) return this.connectionProm;
-        this.connectionProm = createConnection(this.getConnOptions()).then(async (conn)=>{
+        this.connectionProm = this.createDbIfNeeded().then(() => {
+            return createConnection(this.getConnOptions());
+        }).then(async (conn)=>{
             await conn.runMigrations();
             return conn;
         });
         return this.connectionProm;
+    }
+
+    /**
+     * Create the database if configured to do so, otherwise return a resolved promise
+     * @return {Promise<void>}
+     */
+    private createDbIfNeeded(): Promise<void> {
+        if(this.options.createDatabase) return createDatabase({ifNotExist: true}, this.getConnOptions());
+        return Promise.resolve();
     }
 
 
