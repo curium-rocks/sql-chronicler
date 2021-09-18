@@ -158,7 +158,7 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
     async saveRecord(record: IJsonSerializable|IDataEvent|IStatusEvent): Promise<void> {
         if(this.disposed) throw new Error("Object disposed, cannot save data");
         const conn = await this.buildConnection();
-        conn.transaction(async  (transactionalEntityManager) => {
+        await conn.transaction(async  (transactionalEntityManager) => {
             if(isDataEvent(record)) {
                 await this.saveDataEvent(record as IDataEvent, transactionalEntityManager);
             } else if (isStatusEvent(record)) {
