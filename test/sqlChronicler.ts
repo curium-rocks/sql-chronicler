@@ -177,9 +177,10 @@ describe( 'SqlChronicler', function() {
 
             /**
              * @param {DbType} type
+             * @param {string} testName
              * @return {SqlChroniclerOptions}
              */
-            function buildConfig(type: DbType) : SqlChroniclerOptions {
+            function buildConfig(type: DbType, testName: string) : SqlChroniclerOptions {
                 return {
                     type: type,
                     id: 'test-' + type,
@@ -192,13 +193,14 @@ describe( 'SqlChronicler', function() {
                     statusRetention: 30,
                     dataRetention: 30,
                     database: 'chronicler',
+                    connectionName: type + "-" + testName,
                     host: type == DbType.SQL_LITE ? undefined : container.getHost(),
                     port: type == DbType.SQL_LITE ? undefined : container.getMappedPort(getPort(type))
                 }
             }
 
             it('Should record general data', async () => {
-                const chronicler = new SqlChronicler(buildConfig(type));
+                const chronicler = new SqlChronicler(buildConfig(type, "record"));
                 const testData = {
                     "test1": "test1",
                     "test2": "test2",
@@ -212,7 +214,7 @@ describe( 'SqlChronicler', function() {
                     });
 
                     // pull record out and confirm
-                    const conn = getConnection();
+                    const conn = getConnection(`${type}-record`);
                     const records = await conn.manager.find(Record);
                     expect(records).to.not.be.null;
                     expect(records.length).to.be.eq(1);
@@ -229,13 +231,13 @@ describe( 'SqlChronicler', function() {
             });
 
             it('Should record data events', async () => {
-                const chronicler = new SqlChronicler(buildConfig(type));
+                const chronicler = new SqlChronicler(buildConfig(type, "data"));
                 const pingPongEmitter = new PingPongEmitter('test', 'test', 'test', 100);
                 try {
                     pingPongEmitter.onData(chronicler.saveRecord.bind(chronicler));
                     pingPongEmitter.start();
                     await sleep(1000);
-                    const conn = getConnection();
+                    const conn = getConnection(`${type}-data`);
                     const emitters = await conn.manager.find(Emitter);
                     expect(emitters.length).to.be.eq(1);
                     const emitterData = await conn.manager.find(EmitterData);
@@ -248,7 +250,7 @@ describe( 'SqlChronicler', function() {
             });
 
             it('Should record status events', async () => {
-                const chronicler = new SqlChronicler(buildConfig(type));
+                const chronicler = new SqlChronicler(buildConfig(type, "status"));
                 try {
 
                 } finally {

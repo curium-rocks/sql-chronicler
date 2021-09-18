@@ -35,6 +35,7 @@ export interface SqlChroniclerOptions {
     database?: string;
     statusRetention: unknown;
     dataRetention: unknown;
+    connectionName?: string;
 }
 
 /**
@@ -93,6 +94,7 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
     private getConnOptions(): ConnectionOptions {
         const opts = {
             type: this.getDbType(),
+            name: this.options.connectionName,
             host: this.options.host as string,
             port: this.options.port as number,
             username: this.options.credentials.username,
