@@ -214,6 +214,24 @@ describe( 'SqlChronicler', function() {
                     await chronicler.disposeAsync();
                 }
             });
+
+            it('Should record data events', async () => {
+                const chronicler = new SqlChronicler(buildConfig(type));
+                try {
+
+                } finally {
+                    await chronicler.disposeAsync();
+                }
+            });
+
+            it('Should record status events', async () => {
+                const chronicler = new SqlChronicler(buildConfig(type));
+                try {
+
+                } finally {
+                    await chronicler.disposeAsync();
+                }
+            });
         });
     });
 });
