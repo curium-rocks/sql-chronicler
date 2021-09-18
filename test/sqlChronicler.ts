@@ -7,6 +7,7 @@ import { getConnection } from 'typeorm';
 import { Record } from '../src/entities/record';
 import { Emitter } from '../src/entities/emitter';
 import { EmitterData } from '../src/entities/emitterData';
+import { EmitterStatusHistory } from '../src/entities/emitterStatusHistory';
 
 /**
  * 
@@ -251,9 +252,19 @@ describe( 'SqlChronicler', function() {
 
             it('Should record status events', async () => {
                 const chronicler = new SqlChronicler(buildConfig(type, "status"));
+                const pingPongEmitter = new PingPongEmitter('test', 'test', 'test', 100);
                 try {
+                    pingPongEmitter.onStatus(chronicler.saveRecord.bind(chronicler));
+                    pingPongEmitter.start();
+                    await sleep(1000);
+                    const conn = getConnection(`${type}-status`);
+                    const emitters = await conn.manager.find(Emitter);
+                    expect(emitters.length).to.be.eq(1);
+                    const statusHistory = await conn.manager.find(EmitterStatusHistory);
+                    expect(statusHistory.length).to.be.greaterThan(0);
 
                 } finally {
+                    pingPongEmitter.dispose();
                     await chronicler.disposeAsync();
                 }
             });
