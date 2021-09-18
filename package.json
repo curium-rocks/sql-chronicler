@@ -43,6 +43,7 @@
     "sequelize-cli": "^6.2.0",
     "sonarqube-scanner": "^2.8.1",
     "source-map-support": "^0.5.19",
+    "sqlite3": "^5.0.2",
     "testcontainers": "^7.20.3",
     "ts-node": "^10.1.0",
     "typedoc": "^0.21.4",
