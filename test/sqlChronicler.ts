@@ -202,7 +202,7 @@ describe( 'SqlChronicler', function() {
                     },
                     statusRetention: 30,
                     dataRetention: 30,
-                    database: 'chronicler',
+                    database: type == DbType.SQL_LITE ? `${testName}-chronicler` : 'chronicler',
                     connectionName: type + "-" + testName,
                     host: type == DbType.SQL_LITE ? undefined : container.getHost(),
                     port: type == DbType.SQL_LITE ? undefined : container.getMappedPort(getPort(type)),
