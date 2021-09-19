@@ -8,6 +8,8 @@ import { Record } from '../src/entities/record';
 import { Emitter } from '../src/entities/emitter';
 import { EmitterData } from '../src/entities/emitterData';
 import { EmitterStatusHistory } from '../src/entities/emitterStatusHistory';
+import { randomUUID } from 'crypto';
+
 
 /**
  * 
@@ -118,6 +120,8 @@ describe( 'SqlChronicler', function() {
                 const containerDesc = new GenericContainer(getContainerName(type));
                 setEnvVars(type, containerDesc)
                 container = await containerDesc.start();
+                const logs = await container.logs();
+                logs.pipe(process.stderr)
             });
 
             
@@ -242,7 +246,7 @@ describe( 'SqlChronicler', function() {
 
             it('Should record data events', async () => {
                 const chronicler = new SqlChronicler(buildConfig(type, "data"));
-                const pingPongEmitter = new PingPongEmitter('test', 'test', 'test', 100);
+                const pingPongEmitter = new PingPongEmitter(`data-${randomUUID()}`, 'test', 'test', 100);
                 try {
                     pingPongEmitter.onData(chronicler.saveRecord.bind(chronicler));
                     pingPongEmitter.start();
@@ -261,7 +265,7 @@ describe( 'SqlChronicler', function() {
 
             it('Should record status events', async () => {
                 const chronicler = new SqlChronicler(buildConfig(type, "status"));
-                const pingPongEmitter = new PingPongEmitter('test', 'test', 'test', 100);
+                const pingPongEmitter = new PingPongEmitter(`status-${randomUUID()}`, 'test', 'test', 100);
                 try {
                     pingPongEmitter.onStatus(chronicler.saveRecord.bind(chronicler));
                     pingPongEmitter.start();
