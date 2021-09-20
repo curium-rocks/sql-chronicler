@@ -44,6 +44,11 @@ export class Initial1631889997383 implements MigrationInterface {
         }
     }
 
+    /**
+     * 
+     * @param {DbType} dbType 
+     * @return {string}
+     */
     private getBoolType(dbType: string) : string {
         switch(dbType.toLowerCase()) {
             case 'mssql':
