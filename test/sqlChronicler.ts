@@ -23,7 +23,7 @@ function sleep(sleepMs: number): Promise<void> {
 }
 
 describe( 'SqlChronicler', function() {
-    const dbTypes = [DbType.MARIA_DB, DbType.MS_SQL, DbType.MY_SQL, DbType.POSTGRES, DbType.SQL_LITE];
+    const dbTypes = [DbType.MARIA_DB,/* DbType.MS_SQL,*/ DbType.MY_SQL, DbType.POSTGRES, DbType.SQL_LITE];
     dbTypes.forEach((type) => {
         describe(type.toString(), function() {
             let container: StartedTestContainer;
@@ -120,8 +120,8 @@ describe( 'SqlChronicler', function() {
                 const containerDesc = new GenericContainer(getContainerName(type));
                 setEnvVars(type, containerDesc)
                 container = await containerDesc.start();
-                const logs = await container.logs();
-                logs.pipe(process.stderr)
+                //const logs = await container.logs();
+                //logs.pipe(process.stderr);
             });
 
             

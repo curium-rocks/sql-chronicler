@@ -98,6 +98,8 @@ export class Initial1631889997383 implements MigrationInterface {
         switch(dbType.toLowerCase()) {
             case 'postgres':
                 return "uuid_generate_v4()";
+            case 'mssql':
+                return "NEWID()";
             default: 
                 return undefined;
         }
