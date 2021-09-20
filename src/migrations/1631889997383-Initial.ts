@@ -19,6 +19,7 @@ export class Initial1631889997383 implements MigrationInterface {
             case 'postgres':
                 return 'json';
             case 'sqlite':
+            case 'mssql':
             case 'mariadb':
             case 'mysql':
                 return 'text';
@@ -36,8 +37,19 @@ export class Initial1631889997383 implements MigrationInterface {
         switch(dbType.toLowerCase()) {
             case 'sqlite':
                 return "time('now')";
+            case 'mssql':
+                return "getdate()"
             default: 
                 return "now()";
+        }
+    }
+
+    private getBoolType(dbType: string) : string {
+        switch(dbType.toLowerCase()) {
+            case 'mssql':
+                return "bit";
+            default: 
+                return "boolean";
         }
     }
 
@@ -51,8 +63,24 @@ export class Initial1631889997383 implements MigrationInterface {
             case 'mariadb':
             case 'mysql':
                 return "varchar";
+            case 'mssql':
+                return "uniqueidentifier";
             default:
                 return "uuid";
+        }
+    }
+
+    /**
+     * 
+     * @param {DbType} dbType 
+     * @return {string}
+     */
+    private getTimeStamptype(dbType: string): string {
+        switch(dbType.toLowerCase()) {
+            case 'mssql':
+                return "datetime";
+            default:
+                return "timestamp";
         }
     }
 
@@ -108,12 +136,12 @@ export class Initial1631889997383 implements MigrationInterface {
                 },
                 {
                     name: "created_at",
-                    type: "timestamp",
+                    type: this.getTimeStamptype(queryRunner.connection.driver.options.type),
                     default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "updated_at",
-                    type: "timestamp",
+                    type: this.getTimeStamptype(queryRunner.connection.driver.options.type),
                     default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 }
             ]
@@ -142,16 +170,16 @@ export class Initial1631889997383 implements MigrationInterface {
                 },
                 {
                     name: "timestamp",
-                    type: "timestamp"
+                    type: this.getTimeStamptype(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "created_at",
-                    type: "timestamp",
+                    type: this.getTimeStamptype(queryRunner.connection.driver.options.type),
                     default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "updated_at",
-                    type: "timestamp",
+                    type: this.getTimeStamptype(queryRunner.connection.driver.options.type),
                     default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 }
             ]
@@ -174,24 +202,24 @@ export class Initial1631889997383 implements MigrationInterface {
                 },
                 {
                     name: "connected",
-                    type: "boolean"
+                    type: this.getBoolType(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "bit",
-                    type: "boolean"
+                    type: this.getBoolType(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "timestamp",
-                    type: "timestamp"
+                    type: this.getTimeStamptype(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "created_at",
-                    type: "timestamp",
+                    type: this.getTimeStamptype(queryRunner.connection.driver.options.type),
                     default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "updated_at",
-                    type: "timestamp",
+                    type: this.getTimeStamptype(queryRunner.connection.driver.options.type),
                     default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 }
             ]
@@ -212,12 +240,12 @@ export class Initial1631889997383 implements MigrationInterface {
                 },
                 {
                     name: "created_at",
-                    type: "timestamp",
+                    type: this.getTimeStamptype(queryRunner.connection.driver.options.type),
                     default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 },
                 {
                     name: "updated_at",
-                    type: "timestamp",
+                    type: this.getTimeStamptype(queryRunner.connection.driver.options.type),
                     default: this.getNowFunc(queryRunner.connection.driver.options.type)
                 }
             ]

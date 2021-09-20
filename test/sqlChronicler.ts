@@ -185,6 +185,24 @@ describe( 'SqlChronicler', function() {
                 }
             }
 
+
+            /**
+             * 
+             * @param {DbType} type 
+             * @param {string} testName 
+             * @return {string} 
+             */
+            function getDatabaseName(type: DbType, testName: string) : string {
+                switch(type) {
+                    case DbType.SQL_LITE:
+                        return `${testName}-chronicler`;
+                    case DbType.MS_SQL:
+                        return 'master';
+                    default:
+                        return 'chronicler';
+                }
+            }
+
             /**
              * @param {DbType} type
              * @param {string} testName
@@ -202,7 +220,7 @@ describe( 'SqlChronicler', function() {
                     },
                     statusRetention: 30,
                     dataRetention: 30,
-                    database: type == DbType.SQL_LITE ? `${testName}-chronicler` : 'chronicler',
+                    database: getDatabaseName(type, testName),
                     connectionName: type + "-" + testName,
                     host: type == DbType.SQL_LITE ? undefined : container.getHost(),
                     port: type == DbType.SQL_LITE ? undefined : container.getMappedPort(getPort(type)),
