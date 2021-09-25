@@ -1,0 +1,34 @@
+services:
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - "28080:80"
+    environment: 
+      - "PMA_HOST=mariadb"
+  pgadmin:
+    image: dpage/pgadmin4
+    environment: 
+      - "PGADMIN_DEFAULT_EMAIL=admin@test.local"
+      - "PGADMIN_DEFAULT_PASSWORD=admin"
+    ports:
+      - "20080:80"
+  mariadb:
+    image: mariadb
+    environment: 
+      - "MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true"
+    ports:
+      - "3306:3306"
+  postgres:
+    image: postgres
+    environment:
+      - "POSTGRES_PASSWORD=postgres"
+    ports:
+      - "5432:5432"
+  mssql:
+    image: mcr.microsoft.com/mssql/server
+    environment: 
+      - "ACCEPT_EULA=Y"
+      - "MSSQL_PID=Express"
+      - "SA_Password=test"
+    ports:
+      - "1433:1433"

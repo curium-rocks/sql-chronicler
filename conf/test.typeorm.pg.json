@@ -1,0 +1,10 @@
+{
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "postgres",
+    "database": "chronicler",
+    "migrations": ["./build/src/migrations/*.js"],
+    "entities": ["./build/src/entities/*.js"]
+}
