@@ -1,5 +1,5 @@
 {
-  "name": "@curium-rocks/sql-chronicler",
+  "name": "@curium.rocks/sql-chronicler",
   "version": "0.1.0",
   "description": "A library that persists IDataEmitter events to an SQL store using TypeORM",
   "main": "build/src/index.js",
