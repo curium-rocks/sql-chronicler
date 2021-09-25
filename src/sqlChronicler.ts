@@ -1,6 +1,6 @@
-import { IChronicler, IDataEmitter, IDataEvent, IFormatSettings, IJsonSerializable, isDataEvent, isStatusEvent, IStatusEvent } from '@curium.rocks/data-emitter-base';
+import { IChronicler, IDataEmitter, IDataEvent, IFormatSettings, IJsonSerializable, isDataEvent, isStatusEvent, IStatusEvent, LoggerFacade } from '@curium.rocks/data-emitter-base';
 import { BaseChronicler } from '@curium.rocks/data-emitter-base/build/src/chronicler';
-import { createConnection, Connection, DatabaseType, ConnectionOptions, EntityManager, createQueryBuilder } from 'typeorm';
+import { createConnection, getConnectionManager, Connection, DatabaseType, ConnectionOptions, EntityManager } from 'typeorm';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions';
@@ -28,16 +28,17 @@ export interface SqlChroniclerOptions {
     name: string;
     description: string;
     type: DbType;
-    credentials: DbCredentials;
+    credentials?: DbCredentials;
     storagePath?: string;
     host?: string;
     port?: number;
     database?: string;
-    statusRetention: unknown;
-    dataRetention: unknown;
+    statusRetentionDays?: number;
+    dataRetentionDays?: number;
     connectionName?: string;
     extra?: unknown;
     queryLogging?: string[];
+    logger?: LoggerFacade;
 }
 
 /**
@@ -81,10 +82,25 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
      */
     private buildConnection(): Promise<Connection> {
         if(this.connectionProm != null) return this.connectionProm;
-        this.connectionProm = createConnection(this.getConnOptions()).then(async (conn)=>{
-            await conn.runMigrations();
-            return conn;
-        });
+        const options = this.getConnOptions();
+        const connName = options.name || 'default';
+        if(getConnectionManager().has(connName)) {
+            this.connectionProm = Promise.resolve(getConnectionManager().get(connName)).then(async (conn) => {
+               if(conn.isConnected) {
+                   await conn.close();
+               }
+               const retConn = getConnectionManager().create(options);
+               await retConn.connect();
+               await retConn.runMigrations();
+               return retConn;
+            });
+        } else {
+            this.connectionProm = createConnection(this.getConnOptions()).then(async (conn)=>{
+                await conn.runMigrations();
+                return conn;
+            });
+        }
+        
         return this.connectionProm;
     }
 
@@ -98,8 +114,8 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
             name: this.options.connectionName,
             host: this.options.host as string,
             port: this.options.port as number,
-            username: this.options.credentials.username,
-            password: this.options.credentials.password,
+            username: this.options.credentials?.username,
+            password: this.options.credentials?.password,
             database: this.options.database as string,
             entities: [
                 Emitter,
@@ -225,14 +241,6 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
         const record = new Record();
         record.data = rec.toJSON();
         await em.save(record);
-    }
-
-    /**
-     * 
-     * @param {IFormatSettings} settings 
-     */
-    serializeState(settings: IFormatSettings): Promise<string> {
-        throw new Error('Method not implemented.');
     }
 
     /**

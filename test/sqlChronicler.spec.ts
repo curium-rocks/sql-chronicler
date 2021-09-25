@@ -1,6 +1,7 @@
 import { describe, it} from 'mocha';
 import { expect } from 'chai';
 import { DbType, SqlChronicler, SqlChroniclerOptions } from '../src/sqlChronicler';
+import { SqlChroniclerFactory } from '../src/sqlChroniclerFactory';
 import { PingPongEmitter } from '@curium.rocks/ping-pong-emitter';
 import { GenericContainer, StartedTestContainer } from 'testcontainers';
 import { getConnection } from 'typeorm';
@@ -9,6 +10,7 @@ import { Emitter } from '../src/entities/emitter';
 import { EmitterData } from '../src/entities/emitterData';
 import { EmitterStatusHistory } from '../src/entities/emitterStatusHistory';
 import { randomUUID } from 'crypto';
+import { IChronicler } from '@curium.rocks/data-emitter-base';
 
 
 /**
@@ -195,7 +197,7 @@ describe( 'SqlChronicler', function() {
             function getDatabaseName(type: DbType, testName: string) : string {
                 switch(type) {
                     case DbType.SQL_LITE:
-                        return `${testName}-chronicler`;
+                        return `dbTest/${testName}-${randomUUID()}-chronicler`;
                     case DbType.MS_SQL:
                         return 'master';
                     default:
@@ -218,8 +220,8 @@ describe( 'SqlChronicler', function() {
                         username: getUsername(type),
                         password: getPassword(type)
                     },
-                    statusRetention: 30,
-                    dataRetention: 30,
+                    statusRetentionDays: 30,
+                    dataRetentionDays: 30,
                     database: getDatabaseName(type, testName),
                     connectionName: type + "-" + testName,
                     host: type == DbType.SQL_LITE ? undefined : container.getHost(),
@@ -297,6 +299,65 @@ describe( 'SqlChronicler', function() {
                 } finally {
                     pingPongEmitter.dispose();
                     await chronicler.disposeAsync();
+                }
+            });
+
+            it('Should serialize state that can be restored', async () =>  {
+                // build instance, save general data, serialize state, restore instance, fetch general data from new instance
+                let chronicler: IChronicler | undefined = new SqlChronicler(buildConfig(type, "record"));
+                let restoredChronicler: IChronicler | undefined;
+
+                const testData = {
+                    "test1": "test1",
+                    "test2": "test2",
+                    "test3": "test3"
+                };
+                try {
+                    await chronicler.saveRecord({
+                        toJSON: () => {
+                            return testData;
+                        }
+                    });
+
+                    // pull record out and confirm
+                    const conn = getConnection(`${type}-record`);
+                    const records = await conn.manager.find(Record);
+                    expect(records).to.not.be.null;
+                    expect(records.length).to.be.eq(1);
+                    
+                    const state = await chronicler.serializeState({
+                        encrypted: false,
+                        type: SqlChronicler.TYPE // TODO: look at getting rid of this for serialize, the object should know it's type, redundant to specify
+                    });
+                    await conn.close();
+                    await chronicler.disposeAsync();
+                    chronicler = undefined;
+                    const factory = new SqlChroniclerFactory();
+                    await sleep(250);
+                    restoredChronicler = await factory.recreateChronicler(state, {
+                        encrypted: false, 
+                        type: SqlChronicler.TYPE
+                    });
+
+                    await restoredChronicler.saveRecord({
+                        toJSON: () => {
+                            return testData;
+                        }
+                    });
+
+                    // pull record out and confirm
+                    const newConn = getConnection(`${type}-record`);
+                    const newRecords = await newConn.manager.find(Record);
+                    expect(newRecords).to.not.be.null;
+                    expect(newRecords.length).to.be.eq(2);
+
+                } finally {
+                    if(chronicler) {
+                        await chronicler.disposeAsync();
+                    }
+                    if(restoredChronicler) {
+                        await restoredChronicler.disposeAsync();
+                    }
                 }
             });
         });
