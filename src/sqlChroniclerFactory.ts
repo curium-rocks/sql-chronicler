@@ -42,8 +42,8 @@ export class SqlChroniclerFactory extends BaseChroniclerFactory implements IChro
             id: description.id,
             type: this.getDbTypeFromStr(props.type as string),
             credentials: {
-                username: creds.username as string, 
-                password: creds.password as string
+                username: creds?.username as string, 
+                password: creds?.password as string
             },
             logger: this.loggerFacade,
             statusRetentionDays: props.statusRetentionDays as number,
