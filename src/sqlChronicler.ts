@@ -95,16 +95,18 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
                }
                this.logger?.trace('creating new connection');
                const retConn = getConnectionManager().create(options);
-               this.logger?.trace('creating new connection');
+               this.logger?.trace('connecting');
                await retConn.connect();
                this.logger?.info('running migrations');
                await retConn.runMigrations();
+               this.logger?.info('finished running migrations');
                return retConn;
             });
         } else {
             this.connectionProm = createConnection(this.getConnOptions()).then(async (conn)=>{
                 this.logger?.info('running migrations');
                 await conn.runMigrations();
+                this.logger?.info('finished running migrations');
                 return conn;
             });
         }
@@ -176,9 +178,11 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
      */
     async disposeAsync(): Promise<void> {
         this.logger?.debug('disposing');
+        this.logger?.trace('start disposing');
         this.disposed = true;
         if (this.connectionProm) await this.connectionProm;
         await this.connection?.close();
+        this.logger?.trace('end disposing');
     }
 
     /**
@@ -186,6 +190,7 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
      * @param {IJsonSerializable|DataEvent|IStatusEvent} record 
      */
     async saveRecord(record: IJsonSerializable|IDataEvent|IStatusEvent): Promise<void> {
+        this.logger?.trace('start saveRecord');
         if(this.disposed) throw new Error("Object disposed, cannot save data");
         const conn = await this.buildConnection();
         this.logger?.trace("creating transaction for record save");
@@ -203,6 +208,7 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
                 await this.saveGeneralRecord(record, transactionalEntityManager);
             }
         });
+        this.logger?.trace('end saveRecord');
     }
 
     /**
@@ -221,7 +227,7 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
             this.logger?.trace(`saving updates to emitter`);
             await em.save(dbEmitter);
         } else {
-            this.logger?.trace(`do did not find existing match for emitter, creating a new one`);
+            this.logger?.trace(`did not find existing match for emitter, creating a new one`);
             const newEmitter = em.create(Emitter, Emitter.createFromDataEmitter(emitter));
             await em.save(newEmitter);
         }
