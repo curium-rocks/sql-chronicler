@@ -60,6 +60,7 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
     private readonly options: SqlChroniclerOptions;
 
     private disposed = false;
+    private readonly logger?: LoggerFacade;
 
 
     /**
@@ -74,6 +75,7 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
             chroniclerProperties: {}
         })
         this.options = options;
+        this.logger = options.logger;
 
     }
 
@@ -81,21 +83,27 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
      * @return {Promise<Connection>}
      */
     private buildConnection(): Promise<Connection> {
+        this.logger?.trace('building connection with db type');
         if(this.connectionProm != null) return this.connectionProm;
         const options = this.getConnOptions();
         const connName = options.name || 'default';
         if(getConnectionManager().has(connName)) {
+            this.logger?.debug('cleaning up existing connection');
             this.connectionProm = Promise.resolve(getConnectionManager().get(connName)).then(async (conn) => {
                if(conn.isConnected) {
                    await conn.close();
                }
+               this.logger?.trace('creating new connection');
                const retConn = getConnectionManager().create(options);
+               this.logger?.trace('creating new connection');
                await retConn.connect();
+               this.logger?.info('running migrations');
                await retConn.runMigrations();
                return retConn;
             });
         } else {
             this.connectionProm = createConnection(this.getConnOptions()).then(async (conn)=>{
+                this.logger?.info('running migrations');
                 await conn.runMigrations();
                 return conn;
             });
@@ -167,6 +175,7 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
      * @return {Promise<void>}
      */
     async disposeAsync(): Promise<void> {
+        this.logger?.debug('disposing');
         this.disposed = true;
         if (this.connectionProm) await this.connectionProm;
         await this.connection?.close();
@@ -179,14 +188,18 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
     async saveRecord(record: IJsonSerializable|IDataEvent|IStatusEvent): Promise<void> {
         if(this.disposed) throw new Error("Object disposed, cannot save data");
         const conn = await this.buildConnection();
+        this.logger?.trace("creating transaction for record save");
         await conn.transaction("SERIALIZABLE", async  (transactionalEntityManager) => {
             if(isDataEvent(record)) {
+                this.logger?.trace("saving record for data event");
                 await this.saveDataEvent(record as IDataEvent, transactionalEntityManager);
             } else if (isStatusEvent(record)) {
                 // save status event
+                this.logger?.trace("saving record for status event");
                 await this.saveStatusEvent(record as IStatusEvent, transactionalEntityManager);
             } else {
                 // save general record
+                this.logger?.trace("saving general record");
                 await this.saveGeneralRecord(record, transactionalEntityManager);
             }
         });
@@ -200,14 +213,19 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
     private async upsertEmitter(emitter: IDataEmitter, em: EntityManager) : Promise<void> {
         // check if emitter exists
         const id = emitter.id;
+        this.logger?.trace(`looking up emitter with id ${id}`);
         const dbEmitter = await em.findOne(Emitter, id);
         if(dbEmitter) {
+            this.logger?.trace(`found matching emitter with id and name ${id}, ${dbEmitter.name}`);
             dbEmitter.updateFromDataEmitter(emitter);
+            this.logger?.trace(`saving updates to emitter`);
             await em.save(dbEmitter);
         } else {
+            this.logger?.trace(`do did not find existing match for emitter, creating a new one`);
             const newEmitter = em.create(Emitter, Emitter.createFromDataEmitter(emitter));
             await em.save(newEmitter);
         }
+        this.logger?.trace(`finished upsert operation on emitter ${id}`);
     }
 
     /**
@@ -216,9 +234,11 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
      * @param {EntityManager} em 
      */
     private async saveDataEvent(data:IDataEvent, em: EntityManager) : Promise<void> {
+        this.logger?.trace(`start saveDataEvent`);
         await this.upsertEmitter(data.emitter, em);
         const dataEvent = EmitterData.createFromDataEvent(data);
         await em.save(dataEvent);
+        this.logger?.trace(`end saveDataEvent`);
     }
 
     /**
@@ -227,9 +247,11 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
      * @param {EntityManager} em 
      */
     private async saveStatusEvent(status:IStatusEvent, em: EntityManager) : Promise<void>  {
+        this.logger?.trace(`start saveStatusEvent`);
         await this.upsertEmitter(status.emitter, em);
         const statusEvent = EmitterStatusHistory.createFromStatusEvent(status);
         await em.save(statusEvent);
+        this.logger?.trace(`end saveStatusEvent`);
     }
 
     /**
@@ -238,9 +260,11 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
      * @param {EntityManager} em 
      */
     private async saveGeneralRecord(rec:IJsonSerializable, em: EntityManager) : Promise<void> {
+        this.logger?.trace(`start saveGeneralRecord`);
         const record = new Record();
         record.data = rec.toJSON();
         await em.save(record);
+        this.logger?.trace(`end saveGeneralRecord`);
     }
 
     /**
