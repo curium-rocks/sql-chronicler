@@ -73,6 +73,6 @@
   "dependencies": {
     "@curium.rocks/data-emitter-base": "^0.1.1-alpha.35",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.37"
+    "typeorm": "^0.3.0"
   }
 }
