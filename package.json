@@ -43,7 +43,6 @@
     "nyc": "^15.1.0",
     "pg": "^8.7.1",
     "sequelize-cli": "^6.2.0",
-    "sonarqube-scanner": "^2.8.1",
     "source-map-support": "^0.5.19",
     "sqlite3": "^5.0.2",
     "testcontainers": "^7.20.3",
