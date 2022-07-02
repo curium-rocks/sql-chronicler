@@ -9,7 +9,7 @@
     "lint": "eslint src --ext .ts",
     "clean": "rm -fr build",
     "prepare": "npm run build",
-    "doc": "typedoc src/lib.ts",
+    "doc": "typedoc src/lib.ts"
   },
   "repository": {
     "type": "git",
