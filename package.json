@@ -10,7 +10,6 @@
     "clean": "rm -fr build",
     "prepare": "npm run build",
     "doc": "typedoc src/lib.ts",
-    "scan": "sonar-scanner -Dsonar.qualitygate.wait=true -Dsonar.organization=curium-rocks -Dsonar.projectKey=curium-rocks_sql-chronicler -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARQUBE_KEY -Dsonar.javascript.lcov.reportPath=coverage/"
   },
   "repository": {
     "type": "git",
