@@ -9,8 +9,7 @@
     "lint": "eslint src --ext .ts",
     "clean": "rm -fr build",
     "prepare": "npm run build",
-    "doc": "typedoc src/lib.ts",
-    "scan": "sonar-scanner -Dsonar.qualitygate.wait=true -Dsonar.organization=curium-rocks -Dsonar.projectKey=curium-rocks_sql-chronicler -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARQUBE_KEY -Dsonar.javascript.lcov.reportPath=coverage/"
+    "doc": "typedoc src/lib.ts"
   },
   "repository": {
     "type": "git",
@@ -43,7 +42,6 @@
     "nyc": "^15.1.0",
     "pg": "^8.7.1",
     "sequelize-cli": "^6.2.0",
-    "sonarqube-scanner": "^2.8.1",
     "source-map-support": "^0.5.19",
     "sqlite3": "^5.0.2",
     "testcontainers": "^7.20.3",
@@ -73,6 +71,6 @@
   "dependencies": {
     "@curium.rocks/data-emitter-base": "^0.1.1-alpha.35",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.37"
+    "typeorm": "0.3.x"
   }
 }
