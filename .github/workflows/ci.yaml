@@ -13,6 +13,12 @@ jobs:
         node_version: 16.x
         github_token: ${{ secrets.GITHUB_TOKEN }}
         sonarqube_token: ${{ secrets.SONARQUBE_KEY }}
+    - if: ${{ github.actor != 'dependabot[bot]' }}
+      name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   publish:
     needs: build
     if: ${{ (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') }}
