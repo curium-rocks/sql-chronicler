@@ -220,7 +220,11 @@ export class SqlChronicler extends BaseChronicler implements IChronicler {
         // check if emitter exists
         const id = emitter.id;
         this.logger?.trace(`looking up emitter with id ${id}`);
-        const dbEmitter = await em.findOne(Emitter, id);
+        const dbEmitter = await em.findOne(Emitter, {
+            where: {
+                id
+            }
+        });
         if(dbEmitter) {
             this.logger?.trace(`found matching emitter with id and name ${id}, ${dbEmitter.name}`);
             dbEmitter.updateFromDataEmitter(emitter);
